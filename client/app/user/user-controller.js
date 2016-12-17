@@ -197,6 +197,13 @@ angular.module('app.user', ['app.services'])
       if ($scope.user.username !== username) {
         _someoneElseScrewedUp(username);
       }
+
+    $scope.on('powerUp', function(username){
+      if ($scope.user.username !== username) {
+        _youGotAttacked(username);
+      }
+    })
+
     });
 
 //have to be nested, in order to get the questionSet first
@@ -255,6 +262,12 @@ angular.module('app.user', ['app.services'])
       }
     }
 
+    function _youGotAttacked(username) {
+      if ($scope.user.username) {
+        alert('You got attacked');
+      }
+    }
+
     function _startTimer(roundDuration) {
       $timeout(function() {
         handleRoundEnd(gameStart);
@@ -307,7 +320,7 @@ angular.module('app.user', ['app.services'])
 
   $scope.powerUp = function(){
     $scope.gameState.consecutive = 0;
-    
+    UserInfo.powerUp($scope.user.username, $scope.currentRoom.roomname);
   };
 
 ///////////////////////
