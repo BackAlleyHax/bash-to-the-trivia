@@ -6,7 +6,7 @@ angular.module('app.user', ['app.services'])
   var roundLength = 7;
   var goodJob = new Audio('../../audio/goodJob.wav');
   var denied = new Audio('https://www.freesound.org/data/previews/249/249300_4404552-lq.mp3');
-  
+
 
   //Passing data from the UserInfo factory
   $scope.user = UserInfo.user;
@@ -240,7 +240,7 @@ angular.module('app.user', ['app.services'])
         othersWhoScrewedUp: [],
         questionsAttempted: 1,
         gameFinished: false,
-        timer: roundLength, 
+        timer: roundLength,
         scoreBoard: {}
       };
     }
@@ -263,9 +263,7 @@ angular.module('app.user', ['app.services'])
     }
 
     function _youGotAttacked(username) {
-      if ($scope.user.username) {
-        alert('You got attacked');
-      }
+      alert(`you got attacked by ${username}`);
     }
 
     function _startTimer(roundDuration) {
@@ -297,11 +295,14 @@ angular.module('app.user', ['app.services'])
 
     if (isCorrect) {
       goodJob.play();
-      $scope.gameState.numCorrect++;
-      $scope.gameState.consecutive = $scope.gameState.consecutive++ || 1;
       $scope.gameState.isCorrect = 'yes';
-      UserInfo.correctAnswer($scope.user, $scope.currentRoom.roomname);
-      UserInfo.sendScore()
+      $scope.gameState.numCorrect++;
+      $scope.gameState.consecutive = $scope.gameState.consecutive++ || 1
+      if($scope.gameState.consecutive > 0){
+        $scope.gameState.powerUpStatus = true;
+      }
+      UserInfo.correctAnswer($scope.user.username, $scope.currentRoom.roomname);
+      UserInfo.sendScore();
     } else {
       denied.play();
       $scope.gameState.isCorrect = 'no';
@@ -321,6 +322,7 @@ angular.module('app.user', ['app.services'])
   $scope.powerUp = function(){
     $scope.gameState.consecutive = 0;
     UserInfo.powerUp($scope.user.username, $scope.currentRoom.roomname);
+    $scope.gameState.powerUpStatus = false;
   };
 
 ///////////////////////
