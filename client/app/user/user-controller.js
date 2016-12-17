@@ -285,12 +285,14 @@ angular.module('app.user', ['app.services'])
     if (isCorrect) {
       goodJob.play();
       $scope.gameState.numCorrect++;
+      $scope.gameState.consecutive = $scope.gameState.consecutive++ || 1;
       $scope.gameState.isCorrect = 'yes';
       UserInfo.correctAnswer($scope.user, $scope.currentRoom.roomname);
       UserInfo.sendScore()
     } else {
       denied.play();
       $scope.gameState.isCorrect = 'no';
+      $scope.gameState.consecutive = 0;
       UserInfo.incorrectAnswer($scope.user.usernamer, $scope.currentRoom.roomname);
     }
 
@@ -301,6 +303,11 @@ angular.module('app.user', ['app.services'])
     console.log("I am getting called");
     $cookies.put('username', '');
     $location.path('/signin');
+  };
+
+  $scope.powerUp = function(){
+    $scope.gameState.consecutive = 0;
+    
   };
 
 ///////////////////////

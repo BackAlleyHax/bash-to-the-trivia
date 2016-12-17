@@ -8,7 +8,7 @@
   </div>
   <div ng-style="fireworks" class="col-md-12" ng-if="!gameState.gameFinished">
     <label><strong>Answers: </strong></label>
-
+		<button ng-if="gameState.consecutive > 0" ng-click="powerUp()" class='powerUp'>Power Up!!!</button>
     <form ng-repeat="choice in questionSet[gameState.questionsAttempted-1].answerChoices track by $index">
       <input class="answerChoice" type="radio" ng-model="gameState.index" ng-value="$index" ng-change='submitAnswer()' ng-disabled="gameState.isCorrect !== 'pending'">
         <label for="answerChoice">{{choice}}</label>
