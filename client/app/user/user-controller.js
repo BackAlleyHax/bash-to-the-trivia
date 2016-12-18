@@ -166,7 +166,7 @@ angular.module('app.user', ['app.services'])
     } else {
       $scope.currentRoom.users[index].ready = true;
     }
-    setTimeout(function(){$scope.weReady();}, 1000);
+    setTimeout(function(){$scope.weReady();}, 2000);
 
   });
 
