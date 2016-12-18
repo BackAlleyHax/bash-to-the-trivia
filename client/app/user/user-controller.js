@@ -4,6 +4,9 @@ angular.module('app.user', ['app.services'])
 
   //length of round in seconds
   var roundLength = 7;
+  var goodJob = new Audio('../../audio/goodJob.wav');
+  var denied = new Audio('https://www.freesound.org/data/previews/249/249300_4404552-lq.mp3');
+  
 
   //Passing data from the UserInfo factory
   $scope.user = UserInfo.user;
@@ -271,10 +274,12 @@ angular.module('app.user', ['app.services'])
     var isCorrect = activeQuestion.answerChoices[$scope.gameState.index] === activeQuestion.correct_answer;
 
     if (isCorrect) {
+      goodJob.play();
       $scope.gameState.numCorrect++;
       $scope.gameState.isCorrect = 'yes';
       UserInfo.correctAnswer($scope.user.username, $scope.currentRoom.roomname);
     } else {
+      denied.play();
       $scope.gameState.isCorrect = 'no';
       UserInfo.incorrectAnswer($scope.user.usernamer, $scope.currentRoom.roomname);
     }

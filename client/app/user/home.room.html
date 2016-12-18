@@ -10,7 +10,7 @@
 					<th>Score</th>
 					<th>Status</th>
 				</tr>
-				<tr ng-repeat="user in currentRoom.users | orderBy: '-score'">
+				<tr ng-repeat="user in currentRoom.users | orderBy: '-score' track by $index">
 					<td>{{user.username}}</td>
 					<td>{{user.score}}</td>
 					<td>

@@ -18,7 +18,7 @@
 		  </form><br><br>
 
 		  <h4 class="sb">In Room</h4>
-		  <li ng-repeat="user in activeUsers">{{user}}</li>
+		  <li ng-repeat="user in activeUsers track by $index">{{user}}</li>
 
       <button class="signout" ng-click='signOut()'>Sign Out</button>
 
