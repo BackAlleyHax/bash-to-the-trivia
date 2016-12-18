@@ -296,5 +296,12 @@ div.ready {
 .powerUp {
   color: black;
   position: absolute;
-  left: 400px; 
+  left: 400px;
+}
+
+.powerUp2 {
+  color: black;
+  position: absolute;
+  top: 30px;
+  left: 400px;
 }

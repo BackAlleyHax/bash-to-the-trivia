@@ -198,9 +198,15 @@ angular.module('app.user', ['app.services'])
         _someoneElseScrewedUp(username);
       }
 
-    $scope.on('powerUp', function(username){
+    $scope.on('alertPowerUp', function(username) {
       if ($scope.user.username !== username) {
-        _youGotAttacked(username);
+        _youGotAlerted(username);
+      }
+    })
+
+    $scope.on('blankPowerUp', function(username) {
+      if ($scope.user.username !== username) {
+        _youGotBlanked(username);
       }
     })
 
@@ -235,6 +241,7 @@ angular.module('app.user', ['app.services'])
       return {
         index: -1,
         isCorrect: 'pending',
+        consecutive: 0,
         numCorrect: 0,
         gotGanked: false,
         othersWhoScrewedUp: [],
@@ -262,8 +269,13 @@ angular.module('app.user', ['app.services'])
       }
     }
 
-    function _youGotAttacked(username) {
+    function _youGotAlerted(username) {
       alert(`you got attacked by ${username}`);
+    }
+
+    function _youGotBlanked(username) {
+      $scope.gameState.hideQ = true;
+      setTimeout(function(){$scope.gameState.hideQ = false}, 3000);
     }
 
     function _startTimer(roundDuration) {
@@ -297,9 +309,13 @@ angular.module('app.user', ['app.services'])
       goodJob.play();
       $scope.gameState.isCorrect = 'yes';
       $scope.gameState.numCorrect++;
-      $scope.gameState.consecutive = $scope.gameState.consecutive++ || 1
+      $scope.gameState.consecutive++;
+      console.log($scope.gameState.consecutive);
       if($scope.gameState.consecutive > 0){
-        $scope.gameState.powerUpStatus = true;
+        $scope.gameState.alertPowerUp = true;
+      }
+      if($scope.gameState.consecutive > 1){
+        $scope.gameState.blankPowerUp = true;
       }
       UserInfo.correctAnswer($scope.user.username, $scope.currentRoom.roomname);
       UserInfo.sendScore();
@@ -319,11 +335,15 @@ angular.module('app.user', ['app.services'])
     $location.path('/signin');
   };
 
-  $scope.powerUp = function(){
-    $scope.gameState.consecutive = 0;
-    UserInfo.powerUp($scope.user.username, $scope.currentRoom.roomname);
-    $scope.gameState.powerUpStatus = false;
+  $scope.alertPowerUp = function(){
+    UserInfo.alertPowerUp($scope.user.username, $scope.currentRoom.roomname);
+    $scope.gameState.alertPowerUp = false;
   };
+
+  $scope.blankPowerUp = function(){
+    UserInfo.blankPowerUp($scope.user.username, $scope.currentRoom.roomname);
+    $scope.gameState.blankPowerUp = false;
+  }
 
 ///////////////////////
 

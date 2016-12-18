@@ -3,12 +3,13 @@
   <h1 ng-if="!gameState.gameFinished"><span class="glyphicon glyphicon-hourglass"></span>{{gameState.timer}}</h1>
 
 <!-- GAME HANDLING -->
-  <div ng-if="!gameState.gameFinished" class="col-md-12">
+  <div ng-if="gameState.gameFinished === false" ng-hide='gameState.hideQ' class="col-md-12">
     <h5 class="col-md-6"><strong>Question {{gameState.questionsAttempted}} of 10: {{questionSet[gameState.questionsAttempted - 1].question}}</strong></h5>
   </div>
   <div ng-style="fireworks" class="col-md-12" ng-if="!gameState.gameFinished">
     <label><strong>Answers: </strong></label>
-		<button ng-if="gameState.powerUpStatus" ng-click="powerUp()" class='powerUp'>Power Up!!!</button>
+		<button ng-if="gameState.alertPowerUp" ng-click="alertPowerUp()" class='powerUp'>Alert Power Up!!!</button>
+		<button ng-if="gameState.blankPowerUp" ng-click="blankPowerUp()" class='powerUp2'>Power Up!!!</button>
     <form ng-repeat="choice in questionSet[gameState.questionsAttempted-1].answerChoices track by $index">
       <input class="answerChoice" type="radio" ng-model="gameState.index" ng-value="$index" ng-change='submitAnswer()' ng-disabled="gameState.isCorrect !== 'pending'">
         <label for="answerChoice">{{choice}}</label>
