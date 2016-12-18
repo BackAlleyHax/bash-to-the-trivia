@@ -26,7 +26,7 @@ angular.module('app.user', ['app.services'])
     $scope.wipeReady($scope.user.username);
     $scope.currentRoom = UserInfo.getRoom(roomName);
     console.log('timer', timer);
-    if (timer !== 'undefined') {
+    if (timer) {
       $interval.cancel(timer);
     }
   };
@@ -35,7 +35,7 @@ angular.module('app.user', ['app.services'])
     UserInfo.addNewRoom(newRoomName);
     $scope.activeUsers.push($scope.user.username);
     console.log('timer', timer);
-    if (timer !== 'undefined') {
+    if (timer) {
       $interval.cancel(timer);
     }
     $scope.clear();
@@ -54,7 +54,6 @@ angular.module('app.user', ['app.services'])
 
   $scope.playerReady = function() {
     UserInfo.playerReady();
-    $scope.weReady();
   };
 
   $scope.startGame = function() {
@@ -67,9 +66,7 @@ angular.module('app.user', ['app.services'])
     var allReady = $scope.currentRoom.users.every(user => user.ready);
 
     console.log("YO! Are we ready??? ", allReady)
-    if(allReady) {
-      $scope.startGame();
-    }
+    if(allReady) {$scope.startGame();}
 
   };
 
@@ -169,7 +166,7 @@ angular.module('app.user', ['app.services'])
     } else {
       $scope.currentRoom.users[index].ready = true;
     }
-    $scope.weReady();
+    setTimeout(function(){$scope.weReady();}, 1000);
 
   });
 
