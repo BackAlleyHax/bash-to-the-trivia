@@ -42,6 +42,6 @@
 
 
 	<!--<button class="startGame btn" ui-sref="homeState.game" ng-click="startGame()">Start Game</button>-->
-	<button class="player-ready btn btn-primary" ng-click="playerReady()">Ready!</button>
+	<button ng-show="!user.ready" class="player-ready btn btn-primary" ng-click="playerReady()">Ready!</button>
 	<br>
 </div>

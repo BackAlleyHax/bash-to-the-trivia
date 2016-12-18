@@ -162,7 +162,11 @@ angular.module('app.user', ['app.services'])
     console.log(username," is ready!!!");
     console.log('currentRoom', $scope.currentRoom);
     let index = findIndexAtProp($scope.currentRoom.users, 'username', username);
-    $scope.currentRoom.users[index].ready = true;
+    if($scope.currentRoom.users[index].ready === true) {
+      $scope.currentRoom.users[index].ready = false;
+    } else {
+      $scope.currentRoom.users[index].ready = true;
+    }
     $scope.weReady();
 
   });
