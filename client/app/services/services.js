@@ -115,8 +115,9 @@ angular.module('app.services', [
       });
     },
 
-    correctAnswer: function(username) {
-      socket.emit('correctAnswer', username);
+    correctAnswer: function(user) {
+      this.user.score += 100;
+      socket.emit('correctAnswer', user);
     },
 
     incorrectAnswer: function(username, roomname) {

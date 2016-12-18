@@ -74,7 +74,6 @@ angular.module('app.user', ['app.services'])
   $scope.wipeReady = function(username){
     if(username){
       let index = findIndexAtProp($scope.currentRoom.users, 'username', username);
-      console.log("____Ze index is! ", index);
       if(index){
         $scope.currentRoom.users[index].ready = false;
       }
@@ -118,6 +117,8 @@ angular.module('app.user', ['app.services'])
     console.log(username, ' has left the room');
     var index = $scope.activeUsers.indexOf(username);
     $scope.activeUsers.splice(index, 1);
+    index = $scope.currentRoom.users.reduce((a, b, i) => b.username === username ? i : -1, -1);
+    $scope.currentRoom.users.splice(index, 1);
 
     $scope.wipeReady(username);
     // $scope.removeActiveUser(username);
@@ -131,6 +132,9 @@ angular.module('app.user', ['app.services'])
       $scope.activeUsers.push(username);
       console.log(username, ' has joined the room');
     }
+      if ($scope.currentRoom.users.filter(user => user.username === username).length === 0) {
+        $scope.currentRoom.users.push({username: username, score: 0});
+      }
   });
 
   $scope.on('InvitetoNewRoom', function(roomInfo) {
@@ -168,20 +172,24 @@ angular.module('app.user', ['app.services'])
 
 
   $scope.startingGame = function() {
-    if ($scope.gameState) {
+    if ($scope.gameState && !$scope.gameState.gameFinished) {
       return;
     }
     $scope.wipeReady();
+    $scope.user.score = 0;
     var roundDuration = roundLength * 1000;
     $scope.gameState = _resetGameState();
+    $scope.gameState.questionsAttempted = 1;
+    $scope.activeUsers.forEach(user => $scope.gameState.scoreBoard[user] = {username: user, score: 0});
     var mathRandom = Math.random() * 1000;
     var timer = $interval(function() {
-        $scope.gameState.timer -= 1;
+      $scope.gameState.timer -= 1;
     }, 1000);
 
-    $scope.on('correctAnswer', function(username) {
-      if ($scope.user.username !== username) {
-        _someoneElseGotCorrectAnswer(username);
+    $scope.on('correctAnswer', function(user) {
+      $scope.gameState.scoreBoard[user.username] = user;
+      if ($scope.user.username !== user.username) {
+        _someoneElseGotCorrectAnswer(user);
       }
     });
 
@@ -225,13 +233,14 @@ angular.module('app.user', ['app.services'])
         othersWhoScrewedUp: [],
         questionsAttempted: 1,
         gameFinished: false,
-        timer: roundLength
+        timer: roundLength, 
+        scoreBoard: {}
       };
     }
 
-    function _someoneElseGotCorrectAnswer(username) {
+    function _someoneElseGotCorrectAnswer(user) {
       $scope.fireworks = {"background" : "url('../../styles/giphy.gif')"};
-      $scope.gameState.gotGanked = username;
+      $scope.gameState.gotGanked = user.username;
       setTimeout(function(){
         $scope.gameState.gotGanked = false;
         $scope.fireworks = {"background" : ""};
@@ -277,7 +286,8 @@ angular.module('app.user', ['app.services'])
       goodJob.play();
       $scope.gameState.numCorrect++;
       $scope.gameState.isCorrect = 'yes';
-      UserInfo.correctAnswer($scope.user.username, $scope.currentRoom.roomname);
+      UserInfo.correctAnswer($scope.user, $scope.currentRoom.roomname);
+      UserInfo.sendScore()
     } else {
       denied.play();
       $scope.gameState.isCorrect = 'no';
