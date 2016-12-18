@@ -212,7 +212,7 @@ angular.module('app.services', [
           context.user.avatar = resp.data.user.avatar;
           context.user.score = resp.data.user.score;
           context.rooms = resp.data.rooms;
-          socket.emit('signIn', {username: resp.data.user.username});
+          socket.emit('signIn', {username: resp.data.user.username, avatar: resp.data.user.avatar});
           $location.path('/home/profile');
         }
       }).catch(function(err) {

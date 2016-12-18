@@ -113,6 +113,7 @@ io.on('connection', function(socket) {
 
   socket.on('signIn', function(user) {
     socket.username = user.username;
+    socket.avatar = user.avatar;
     socket.roomname = 'Profile';
     socket.join('Profile');
     roomsX[socket.roomname].push(socket.username);
@@ -144,7 +145,7 @@ io.on('connection', function(socket) {
     console.log('newroom: ', newRoom);
     console.log('socket.roomname: ', socket.roomname);
 
-    io.sockets.in(newRoom).emit('UserJoined', socket.username, roomsX[newRoom]);
+    io.sockets.in(newRoom).emit('UserJoined', socket.username, socket.avatar, roomsX[newRoom]);
   });
 
   socket.on('addNewRoom', function(newRoomName) {

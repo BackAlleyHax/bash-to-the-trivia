@@ -124,7 +124,8 @@ angular.module('app.user', ['app.services'])
     // $scope.removeActiveUser(username);
   });
 
- $scope.on('UserJoined', function(username, activeUsers) {
+ $scope.on('UserJoined', function(username, avatar, activeUsers) {
+   console.log('avatar1', avatar);
     if (username === $scope.user.username) {
       $scope.activeUsers = activeUsers;
       console.log(activeUsers, ' are in the room');
@@ -133,7 +134,8 @@ angular.module('app.user', ['app.services'])
       console.log(username, ' has joined the room');
     }
       if ($scope.currentRoom.users.filter(user => user.username === username).length === 0) {
-        $scope.currentRoom.users.push({username: username, score: 0});
+        console.log('avatar2',avatar);
+        $scope.currentRoom.users.push({username: username, avatar: avatar, score: 0});
       }
   });
 
