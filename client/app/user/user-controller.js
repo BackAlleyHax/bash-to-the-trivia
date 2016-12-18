@@ -25,7 +25,8 @@ angular.module('app.user', ['app.services'])
   $scope.goToRoom = function(roomName) {
     $scope.wipeReady($scope.user.username);
     $scope.currentRoom = UserInfo.getRoom(roomName);
-    if (timer) {
+    console.log('timer', timer);
+    if (timer !== 'undefined') {
       $interval.cancel(timer);
     }
   };
@@ -33,7 +34,8 @@ angular.module('app.user', ['app.services'])
   $scope.addRoom = function(newRoomName) {
     UserInfo.addNewRoom(newRoomName);
     $scope.activeUsers.push($scope.user.username);
-    if (timer) {
+    console.log('timer', timer);
+    if (timer !== 'undefined') {
       $interval.cancel(timer);
     }
     $scope.clear();
