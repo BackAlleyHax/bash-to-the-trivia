@@ -190,8 +190,8 @@ io.on('connection', function(socket) {
     io.sockets.in(socket.roomname).emit('playerReady', username);
   });
 
-  socket.on('correctAnswer', function(username, roomname) {
-    io.sockets.in(socket.roomname).emit('correctAnswer', username);
+  socket.on('correctAnswer', function(user) {
+    io.sockets.in(socket.roomname).emit('correctAnswer', user);
   });
 
   socket.on('incorrectAnswer', function(username) {

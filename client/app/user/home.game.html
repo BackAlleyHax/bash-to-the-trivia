@@ -1,12 +1,12 @@
 <div id="page-game-wrapper">
 	<h2>Trivia time!</h2><hr>
-  <h1 ng-if="gameState.gameFinished === false"><span class="glyphicon glyphicon-hourglass"></span>{{gameState.timer}}</h1>
+  <h1 ng-if="!gameState.gameFinished"><span class="glyphicon glyphicon-hourglass"></span>{{gameState.timer}}</h1>
 
 <!-- GAME HANDLING -->
-  <div ng-if="gameState.gameFinished === false" class="col-md-12">
+  <div ng-if="!gameState.gameFinished" class="col-md-12">
     <h5 class="col-md-6"><strong>Question {{gameState.questionsAttempted}} of 10: {{questionSet[gameState.questionsAttempted - 1].question}}</strong></h5>
   </div>
-  <div ng-style="fireworks" class="col-md-12" ng-if="gameState.gameFinished === false">
+  <div ng-style="fireworks" class="col-md-12" ng-if="!gameState.gameFinished">
     <label><strong>Answers: </strong></label>
 
     <form ng-repeat="choice in questionSet[gameState.questionsAttempted-1].answerChoices track by $index">
@@ -28,6 +28,18 @@
       Pick an answer SLOWPOKE!
     </div>
     </br></br>
+    <div ng-if="!gameState.gameFinished">
+    		  <table>
+				<tr>
+					<th>Player</th>
+					<th>Score</th>
+				</tr>
+				<tr ng-repeat="user in gameState.scoreBoard">
+					<td>{{user.username}}</td>
+					<td>{{user.score}}</td>
+				</tr>
+			</table>
+      </div>
     <div ng-if="gameState.gameFinished" class="endgame-message">
       You got {{gameState.numCorrect}}/{{gameState.questionsAttempted - 1}} correct <br><br>
       <button ui-sref="^.room({roomname: currentRoom.roomname})" class="btn btn-primary">Back to {{currentRoom.roomname}}</button>
