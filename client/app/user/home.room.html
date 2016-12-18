@@ -11,7 +11,7 @@
 					<th>Status</th>
 				</tr>
 				<tr ng-repeat="user in currentRoom.users | orderBy: '-score' track by $index">
-					<td>{{user.username}}</td>
+					<td><img ng-src="/api/uploads/{{user.avatar}}">{{user.username}}</td>
 					<td>{{user.score}}</td>
 					<td>
 						<div ng-show="!user.ready" class="not-ready">waiting</div>

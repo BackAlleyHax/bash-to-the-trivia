@@ -10,6 +10,7 @@ angular.module('app.user', ['app.services'])
 
   //Passing data from the UserInfo factory
   $scope.user = UserInfo.user;
+  $scope.avatar = UserInfo.user.avatar;
   $scope.rooms = UserInfo.rooms;
   $scope.currentRoom = UserInfo.currentRoom;
   $scope.activeUsers = [];

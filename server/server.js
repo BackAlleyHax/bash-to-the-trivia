@@ -242,7 +242,7 @@ app.get('/api/rooms', function(req, res) {
 app.get('/api/users/:username', function(req, res) {
 	var username = req.params.username;
 	User.findOne( {username: username}, function(err, user) {
-		res.json({username: username, rooms: user.rooms, avatar: user.avatarUrl})
+		res.json({username: username, rooms: user.rooms, avatar: user.avatar})
 	})
 })
 
@@ -282,10 +282,8 @@ app.post('/api/users/addRoom', function(req, res) {
 							if(err) {
 								res.status(500).send(new Error('Error on save Admin'));
 							}
-						}).then(function(resp) {
-								console.log("resp", resp)
-								res.sendStatus(201);
-						})
+              res.status(201).send(user);
+						});
 					}
 				});
 			})
@@ -322,7 +320,7 @@ app.post('/api/users/addNewPlayer', function(req, res) {
 							if(err) {
 								return res.status(400).send('Cannot save user updates');
 							}
-							res.status(201).send('Added new player succesfully');
+							res.status(201).send(user);
 						});
 					});
 				});

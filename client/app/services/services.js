@@ -21,6 +21,7 @@ angular.module('app.services', [
       }).then(function successCallback(resp) {
         var user = {
           username: context.user.username,
+          avatar: resp.data.avatar,
           score: 0
         };
         context.rooms[newRoomName] = {
@@ -48,8 +49,10 @@ angular.module('app.services', [
         url: 'api/users/addNewPlayer',
         data: {roomname: roomname, newPlayerUsername: newPlayerUsername}
       }).then(function successCallback(resp) {
+        console.log('avatar', resp.data.avatar);
         var newPlayer = {
           username: newPlayerUsername,
+          avatar: resp.data.avatar,
           score: 0,
         };
         context.rooms[roomname].users.push(newPlayer);
