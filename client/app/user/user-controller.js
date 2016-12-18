@@ -241,7 +241,8 @@ angular.module('app.user', ['app.services'])
       return {
         index: -1,
         isCorrect: 'pending',
-        consecutive: 0,
+        consecutive1: 0,
+        consecutive2: 0,
         numCorrect: 0,
         gotGanked: false,
         othersWhoScrewedUp: [],
@@ -309,12 +310,13 @@ angular.module('app.user', ['app.services'])
       goodJob.play();
       $scope.gameState.numCorrect++;
       $scope.gameState.isCorrect = 'yes';
-      $scope.gameState.consecutive++;
+      $scope.gameState.consecutive1++;
+      $scope.gameState.consecutive2++;
       console.log($scope.gameState.consecutive);
-      if($scope.gameState.consecutive > 0){
+      if($scope.gameState.consecutive1 > 0) {
         $scope.gameState.alertPowerUp = true;
       }
-      if($scope.gameState.consecutive > 1){
+      if($scope.gameState.consecutive2 > 1) {
         $scope.gameState.blankPowerUp = true;
       }
       UserInfo.correctAnswer($scope.user.username, $scope.currentRoom.roomname);
@@ -322,7 +324,8 @@ angular.module('app.user', ['app.services'])
     } else {
       denied.play();
       $scope.gameState.isCorrect = 'no';
-      $scope.gameState.consecutive = 0;
+      $scope.gameState.consecutive1 = 0;
+      $scope.gameState.consecutive2 = 0;
       UserInfo.incorrectAnswer($scope.user.username, $scope.currentRoom.roomname);
     }
 
@@ -341,6 +344,7 @@ angular.module('app.user', ['app.services'])
   };
 
   $scope.blankPowerUp = function(){
+    $scope.gameState.consecutive2 = 0;
     UserInfo.blankPowerUp($scope.user.username, $scope.currentRoom.roomname);
     $scope.gameState.blankPowerUp = false;
   }
