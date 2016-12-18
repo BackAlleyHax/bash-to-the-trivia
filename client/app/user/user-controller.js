@@ -307,8 +307,8 @@ angular.module('app.user', ['app.services'])
 
     if (isCorrect) {
       goodJob.play();
-      $scope.gameState.isCorrect = 'yes';
       $scope.gameState.numCorrect++;
+      $scope.gameState.isCorrect = 'yes';
       $scope.gameState.consecutive++;
       console.log($scope.gameState.consecutive);
       if($scope.gameState.consecutive > 0){
@@ -323,7 +323,7 @@ angular.module('app.user', ['app.services'])
       denied.play();
       $scope.gameState.isCorrect = 'no';
       $scope.gameState.consecutive = 0;
-      UserInfo.incorrectAnswer($scope.user.usernamer, $scope.currentRoom.roomname);
+      UserInfo.incorrectAnswer($scope.user.username, $scope.currentRoom.roomname);
     }
 
     $scope.clear();
