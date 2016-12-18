@@ -292,3 +292,16 @@ div.ready {
     border-radius:10px;
     width:auto;
 }
+
+.powerUp {
+  color: black;
+  position: absolute;
+  left: 400px;
+}
+
+.powerUp2 {
+  color: black;
+  position: absolute;
+  top: 30px;
+  left: 400px;
+}

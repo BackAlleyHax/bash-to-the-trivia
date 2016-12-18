@@ -6,7 +6,7 @@ angular.module('app.user', ['app.services'])
   var roundLength = 7;
   var goodJob = new Audio('../../audio/goodJob.wav');
   var denied = new Audio('https://www.freesound.org/data/previews/249/249300_4404552-lq.mp3');
-  
+
 
   //Passing data from the UserInfo factory
   $scope.user = UserInfo.user;
@@ -188,7 +188,9 @@ angular.module('app.user', ['app.services'])
 
     $scope.on('correctAnswer', function(user) {
       $scope.gameState.scoreBoard[user.username] = user;
-      if ($scope.user.username !== user.username) {
+      $scope.fireworks = {"background" : "url('../../styles/giphy.gif')"};
+      setTimeout(function(){$scope.fireworks = {"background" : ""};}, 1000);
+      if ($scope.user.username !== user) {
         _someoneElseGotCorrectAnswer(user);
       }
     });
@@ -197,6 +199,19 @@ angular.module('app.user', ['app.services'])
       if ($scope.user.username !== username) {
         _someoneElseScrewedUp(username);
       }
+
+    $scope.on('alertPowerUp', function(username) {
+      if ($scope.user.username !== username) {
+        _youGotAlerted(username);
+      }
+    })
+
+    $scope.on('blankPowerUp', function(username) {
+      if ($scope.user.username !== username) {
+        _youGotBlanked(username);
+      }
+    })
+
     });
 
 //have to be nested, in order to get the questionSet first
@@ -228,23 +243,21 @@ angular.module('app.user', ['app.services'])
       return {
         index: -1,
         isCorrect: 'pending',
+        consecutive1: 0,
+        consecutive2: 0,
         numCorrect: 0,
         gotGanked: false,
         othersWhoScrewedUp: [],
         questionsAttempted: 1,
         gameFinished: false,
-        timer: roundLength, 
+        timer: roundLength,
         scoreBoard: {}
       };
     }
 
     function _someoneElseGotCorrectAnswer(user) {
-      $scope.fireworks = {"background" : "url('../../styles/giphy.gif')"};
       $scope.gameState.gotGanked = user.username;
-      setTimeout(function(){
-        $scope.gameState.gotGanked = false;
-        $scope.fireworks = {"background" : ""};
-      }, 1000);
+      setTimeout(function(){$scope.gameState.gotGanked = false;}, 1000);
       $scope.gameState.isCorrect = 'ganked';
     }
 
@@ -253,6 +266,15 @@ angular.module('app.user', ['app.services'])
         $scope.gameState.othersWhoScrewedUp.push(username);
         console.log($scope.gameState.othersWhoScrewedUp);
       }
+    }
+
+    function _youGotAlerted(username) {
+      alert(`you got attacked by ${username}`);
+    }
+
+    function _youGotBlanked(username) {
+      $scope.gameState.hideQ = true;
+      setTimeout(function(){$scope.gameState.hideQ = false}, 3000);
     }
 
     function _startTimer(roundDuration) {
@@ -286,12 +308,23 @@ angular.module('app.user', ['app.services'])
       goodJob.play();
       $scope.gameState.numCorrect++;
       $scope.gameState.isCorrect = 'yes';
-      UserInfo.correctAnswer($scope.user, $scope.currentRoom.roomname);
-      UserInfo.sendScore()
+      $scope.gameState.consecutive1++;
+      $scope.gameState.consecutive2++;
+      console.log($scope.gameState.consecutive);
+      if($scope.gameState.consecutive1 > 0) {
+        $scope.gameState.alertPowerUp = true;
+      }
+      if($scope.gameState.consecutive2 > 1) {
+        $scope.gameState.blankPowerUp = true;
+      }
+      UserInfo.correctAnswer($scope.user.username, $scope.currentRoom.roomname);
+      UserInfo.sendScore();
     } else {
       denied.play();
       $scope.gameState.isCorrect = 'no';
-      UserInfo.incorrectAnswer($scope.user.usernamer, $scope.currentRoom.roomname);
+      $scope.gameState.consecutive1 = 0;
+      $scope.gameState.consecutive2 = 0;
+      UserInfo.incorrectAnswer($scope.user.username, $scope.currentRoom.roomname);
     }
 
     $scope.clear();
@@ -302,6 +335,17 @@ angular.module('app.user', ['app.services'])
     $cookies.put('username', '');
     $location.path('/signin');
   };
+
+  $scope.alertPowerUp = function(){
+    UserInfo.alertPowerUp($scope.user.username, $scope.currentRoom.roomname);
+    $scope.gameState.alertPowerUp = false;
+  };
+
+  $scope.blankPowerUp = function(){
+    $scope.gameState.consecutive2 = 0;
+    UserInfo.blankPowerUp($scope.user.username, $scope.currentRoom.roomname);
+    $scope.gameState.blankPowerUp = false;
+  }
 
 ///////////////////////
 

@@ -163,7 +163,7 @@ io.on('connection', function(socket) {
       roomsX[newRoomName].push(socket.username);
     }
     console.log('new roomX: ', roomsX[newRoomName])
-    
+
 
   });
 
@@ -198,6 +198,13 @@ io.on('connection', function(socket) {
     io.sockets.in(socket.roomname).emit('incorrectAnswer', socket.username);
   })
 
+  socket.on('alertPowerUp', function(username) {
+    io.sockets.in(socket.roomname).emit('alertPowerUp', socket.username);
+  })
+
+  socket.on('blankPowerUp', function(username) {
+    io.sockets.in(socket.roomname).emit('blankPowerUp', socket.username);
+  })
 
 });
 
@@ -590,6 +597,7 @@ http.listen(PORT, function() {
 });
 
 
+
 function debounce(func, wait, immediate) {
     var timeout;
     return function() {
@@ -604,4 +612,3 @@ function debounce(func, wait, immediate) {
         if (callNow) func.apply(context, args);
     };
 };
-

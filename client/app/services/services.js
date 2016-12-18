@@ -124,6 +124,14 @@ angular.module('app.services', [
       socket.emit('incorrectAnswer', username, roomname);
     },
 
+    alertPowerUp: function(username, roomname) {
+      socket.emit('alertPowerUp', username, roomname);
+    },
+
+    blankPowerUp: function(username, roomname) {
+      socket.emit('blankPowerUp', username, roomname);
+    },
+
     updateAllScores: function() {
       var context = this;
       return $http({
