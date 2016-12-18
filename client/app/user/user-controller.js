@@ -191,8 +191,8 @@ angular.module('app.user', ['app.services'])
       $scope.gameState.timer -= 1;
     }, 1000);
 
-    $scope.on('correctAnswer', function(user) {
-      $scope.gameState.scoreBoard[user.username] = user;
+    $scope.on('correctAnswer', function(user, score) {
+      $scope.gameState.scoreBoard[user].score = score;
       $scope.fireworks = {"background" : "url('../../styles/giphy.gif')"};
       setTimeout(function(){$scope.fireworks = {"background" : ""};}, 1000);
       if ($scope.user.username !== user) {
@@ -323,7 +323,7 @@ angular.module('app.user', ['app.services'])
         $scope.gameState.blankPowerUp = true;
       }
       UserInfo.correctAnswer($scope.user.username, $scope.currentRoom.roomname);
-      UserInfo.sendScore();
+      UserInfo.sendScore(100);
     } else {
       denied.play();
       $scope.gameState.isCorrect = 'no';

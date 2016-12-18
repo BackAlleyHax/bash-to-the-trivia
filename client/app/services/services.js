@@ -108,7 +108,6 @@ angular.module('app.services', [
           roomname: context.currentRoom.roomname
         }
       }).then(function successCallback(resp) {
-        context.user.score += score;
         socket.emit('updateScores', context.currentRoom.roomname);
       }, function errorCallback(err) {
         throw err;
@@ -117,7 +116,8 @@ angular.module('app.services', [
 
     correctAnswer: function(user) {
       this.user.score += 100;
-      socket.emit('correctAnswer', user);
+      var score = this.user.score;
+      socket.emit('correctAnswer', user, score);
     },
 
     incorrectAnswer: function(username, roomname) {
