@@ -188,7 +188,9 @@ angular.module('app.user', ['app.services'])
 
     $scope.on('correctAnswer', function(user) {
       $scope.gameState.scoreBoard[user.username] = user;
-      if ($scope.user.username !== user.username) {
+      $scope.fireworks = {"background" : "url('../../styles/giphy.gif')"};
+      setTimeout(function(){$scope.fireworks = {"background" : ""};}, 1000);
+      if ($scope.user.username !== user) {
         _someoneElseGotCorrectAnswer(user);
       }
     });
@@ -254,12 +256,8 @@ angular.module('app.user', ['app.services'])
     }
 
     function _someoneElseGotCorrectAnswer(user) {
-      $scope.fireworks = {"background" : "url('../../styles/giphy.gif')"};
       $scope.gameState.gotGanked = user.username;
-      setTimeout(function(){
-        $scope.gameState.gotGanked = false;
-        $scope.fireworks = {"background" : ""};
-      }, 1000);
+      setTimeout(function(){$scope.gameState.gotGanked = false;}, 1000);
       $scope.gameState.isCorrect = 'ganked';
     }
 
