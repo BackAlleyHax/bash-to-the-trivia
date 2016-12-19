@@ -16,6 +16,7 @@ angular.module('app.profile', [])
         data: {avatar: file, username: $scope.user.username},
       })
       .then(function (response) {
+        console.log(response);
         $scope.avatar = response.data;
       });
     }

@@ -45,7 +45,7 @@ app.post('/api/profile/upload', uploading.single('avatar'), function(req, res, n
       console.log('user', user);
       user.save(function(err, user) {
         if (err) {
-          return res.sendStatus(500).end();
+          return res.status(400).send('Error on save');
         }
         console.log('save succesful', user.avatar);
         res.send(user.avatar);
@@ -354,6 +354,7 @@ app.post('/api/updateScores', function(req, res) {
                 if (room.users[i].username === username) {
                   var newUser = {
                     username: username,
+                    avatar: room.users[i].avatar,
                     score: room.users[i].score + score
                   };
                   usersArray.push(newUser);
