@@ -3,7 +3,7 @@ angular.module('app.user', ['app.services'])
 .controller('HomeController', function($scope, $location, UserInfo, $rootScope, $timeout, $interval, $cookies) {
 
   //length of round in seconds
-  var roundLength = 2;
+  var roundLength = 5;
   var goodJob = new Audio('../../audio/goodJob.wav');
   var denied = new Audio('https://www.freesound.org/data/previews/249/249300_4404552-lq.mp3');
 
@@ -167,7 +167,9 @@ angular.module('app.user', ['app.services'])
     } else {
       $scope.currentRoom.users[index].ready = true;
     }
-    setTimeout(function(){$scope.weReady();}, 2000);
+    // setTimeout(function(){$scope.weReady();}, 2000);
+    // setTimeout takes too long for testing purposes
+    $scope.weReady();
 
   });
 
