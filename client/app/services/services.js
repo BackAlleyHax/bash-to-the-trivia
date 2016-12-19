@@ -3,7 +3,7 @@
 angular.module('app.services', [
   'ngCookies'
 ])
-.factory('UserInfo', function($http, $rootScope, $location, $timeout, $cookies) {
+.factory('UserInfo', function($http, $rootScope, $location, $timeout, $cookies, Upload) {
   var socket = io.connect();
 
   return {
@@ -74,7 +74,7 @@ angular.module('app.services', [
         method: 'GET',
         url: 'api/questions'
       }).then(function successCallback(resp) {
-
+        console.log("response from questions/api in startNewGame", resp);
         for (var i = 0; i < resp.data.length; i++) {
           resp.data[i].incorrect_answers.splice(Math.floor(Math.random() * 4), 0, resp.data[i].correct_answer);
           resp.data[i].answerChoices = resp.data[i].incorrect_answers;
@@ -130,10 +130,17 @@ angular.module('app.services', [
 
     alertPowerUp: function(username, roomname) {
       socket.emit('alertPowerUp', username, roomname);
+      console.log("alert emitted to server");
     },
 
     blankPowerUp: function(username, roomname) {
       socket.emit('blankPowerUp', username, roomname);
+      console.log("blank emitted to server");
+    },
+
+    blackoutPowerUp: function(username, roomname) {
+      socket.emit('blackoutPowerUp', username, roomname);
+      console.log("blackout emitted to server");
     },
 
     updateAllScores: function() {
@@ -148,6 +155,23 @@ angular.module('app.services', [
       }, function errorCallback(err) {
         throw err;
       });
+    },
+
+    uploadAvatar: function(file, $scope) {
+      var context = this;
+      if (file) {
+        console.log(file);
+        Upload.upload({
+          url: 'api/profile/upload/',
+          method: 'POST',
+          data: {avatar: file, username: $scope.user.username},
+        })
+        .then(function (response) {
+          console.log(response);
+          $scope.avatar = response.data;
+          context.user.avatar = response.data;
+        });
+      }
     },
 
 //RE-IMPLEMENTING SOCKETS.IO METHODS TO USE THEM IN THE CONTROLLERS DUE TO SCOPE ISSUES//

@@ -35,15 +35,16 @@ angular.module('app.user', ['app.services'])
   $scope.addRoom = function(newRoomName) {
     UserInfo.addNewRoom(newRoomName);
     $scope.activeUsers.push($scope.user.username);
+    $scope.clear();
     console.log('timer', timer);
     if (timer) {
       $interval.cancel(timer);
     }
-    $scope.clear();
   };
 
   $scope.clear = function() {
-    $scope.newRoomName = '';
+    console.log("clear getting called");
+    $scope.newRoomName = null;
     $scope.newPlayer = {};
   }
 
@@ -167,7 +168,9 @@ angular.module('app.user', ['app.services'])
     } else {
       $scope.currentRoom.users[index].ready = true;
     }
-    setTimeout(function(){$scope.weReady();}, 2000);
+    // setTimeout(function(){$scope.weReady();}, 2000);
+    // setTimeout takes too long for testing purposes
+    $scope.weReady();
 
   });
 
@@ -218,6 +221,13 @@ angular.module('app.user', ['app.services'])
       }
     })
 
+    $scope.on('blackoutPowerUp', function(username) {
+      if($scope.user.username !== username) {
+        console.log("scope on blackout");
+        _youGotBlackedOut(username);
+      }
+    })
+
     });
 
 //have to be nested, in order to get the questionSet first
@@ -227,6 +237,13 @@ angular.module('app.user', ['app.services'])
     function handleRoundEnd(callback) {
       $scope.gameState.timer = roundLength;
       $scope.gameState.questionsAttempted++;
+      // sets powerup streaks to zero when you don't answer a question
+      if($scope.gameState.isCorrect === 'pending' || $scope.gameState.isCorrect === 'ganked'){
+        console.log('getting inside the pending');
+        $scope.gameState.consecutive1 = 0;
+        $scope.gameState.consecutive2 = 0;
+        $scope.gameState.consecutive3 = 0;
+      }
       $scope.gameState.isCorrect = 'pending';
       $scope.gameState.gotGanked = false;
       $scope.gameState.othersWhoScrewedUp = [];
@@ -251,6 +268,7 @@ angular.module('app.user', ['app.services'])
         isCorrect: 'pending',
         consecutive1: 0,
         consecutive2: 0,
+        consecutive3: 0,
         numCorrect: 0,
         gotGanked: false,
         othersWhoScrewedUp: [],
@@ -275,12 +293,19 @@ angular.module('app.user', ['app.services'])
     }
 
     function _youGotAlerted(username) {
-      alert(`you got attacked by ${username}`);
+      $scope.gameState.isCorrect = 'disabled';
+      setTimeout(function(){$scope.gameState.isCorrect = 'pending'}, 1000);
     }
 
     function _youGotBlanked(username) {
-      $scope.gameState.hideQ = true;
-      setTimeout(function(){$scope.gameState.hideQ = false}, 3000);
+      $scope.gameState.hideQ = {state: true, user: username};
+      setTimeout(function(){$scope.gameState.hideQ = {state: false, username: ''}}, 3000);
+    }
+
+    function _youGotBlackedOut(username) {
+      console.log("Black out getting called");
+      $scope.blackout = {state: true, user: username};
+      setTimeout(function(){$scope.blackout = {state: false, user: ''}}, 5000);
     }
 
     function _startTimer(roundDuration) {
@@ -316,12 +341,19 @@ angular.module('app.user', ['app.services'])
       $scope.gameState.isCorrect = 'yes';
       $scope.gameState.consecutive1++;
       $scope.gameState.consecutive2++;
+      $scope.gameState.consecutive3++;
+      console.log('1', $scope.gameState.consecutive1);
+      console.log('2', $scope.gameState.consecutive2);
+      console.log('3', $scope.gameState.consecutive3);
       console.log($scope.gameState.consecutive);
       if($scope.gameState.consecutive1 > 0) {
         $scope.gameState.alertPowerUp = true;
       }
       if($scope.gameState.consecutive2 > 1) {
         $scope.gameState.blankPowerUp = true;
+      }
+      if($scope.gameState.consecutive3 > 2) {
+        $scope.gameState.blackoutPowerUp = true;
       }
       UserInfo.correctAnswer($scope.user.username, $scope.currentRoom.roomname);
       UserInfo.sendScore(100);
@@ -330,6 +362,7 @@ angular.module('app.user', ['app.services'])
       $scope.gameState.isCorrect = 'no';
       $scope.gameState.consecutive1 = 0;
       $scope.gameState.consecutive2 = 0;
+      $scope.gameState.consecutive3 = 0;
       UserInfo.incorrectAnswer($scope.user.username, $scope.currentRoom.roomname);
     }
 
@@ -349,8 +382,15 @@ angular.module('app.user', ['app.services'])
 
   $scope.blankPowerUp = function(){
     $scope.gameState.consecutive2 = 0;
+    console.log($scope.gameState.consecutive2);
     UserInfo.blankPowerUp($scope.user.username, $scope.currentRoom.roomname);
     $scope.gameState.blankPowerUp = false;
+  };
+
+  $scope.blackoutPowerUp = function(){
+    $scope.gameState.consecutive3 = 0;
+    UserInfo.blackoutPowerUp($scope.user.username, $scope.currentRoom.roomname);
+    $scope.gameState.blackoutPowerUp = false;
   }
 
 ///////////////////////

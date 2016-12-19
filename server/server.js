@@ -23,7 +23,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 var uploading = multer({
-  dest: 'uploads',
+  dest: '../uploads',
 });
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -45,7 +45,7 @@ app.post('/api/profile/upload', uploading.single('avatar'), function(req, res, n
       console.log('user', user);
       user.save(function(err, user) {
         if (err) {
-          return res.sendStatus(500).end();
+          return res.status(400).send('Error on save');
         }
         console.log('save succesful', user.avatar);
         res.send(user.avatar);
@@ -201,10 +201,17 @@ io.on('connection', function(socket) {
 
   socket.on('alertPowerUp', function(username) {
     io.sockets.in(socket.roomname).emit('alertPowerUp', socket.username);
+    console.log("alert emit received on server side");
   })
 
   socket.on('blankPowerUp', function(username) {
     io.sockets.in(socket.roomname).emit('blankPowerUp', socket.username);
+    console.log("blank emit received on server side");
+  })
+
+  socket.on('blackoutPowerUp', function(username) {
+    io.sockets.in(socket.roomname).emit('blackoutPowerUp', socket.username);
+    console.log("blackout emit received on server side");
   })
 
 });
@@ -354,6 +361,7 @@ app.post('/api/updateScores', function(req, res) {
                 if (room.users[i].username === username) {
                   var newUser = {
                     username: username,
+                    avatar: room.users[i].avatar,
                     score: room.users[i].score + score
                   };
                   usersArray.push(newUser);
@@ -505,6 +513,7 @@ app.get('/api/questions', function(req, res) {
   var promise = new Promise(function(resolve, reject) {
     request.get(questionApi, function (error, response, body) {
       if (error && !response.statusCode == 200) {
+        console.log("Error at api/questions!!!");
         reject(err);
       } else {
         resolve(body);
