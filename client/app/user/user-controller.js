@@ -118,8 +118,8 @@ angular.module('app.user', ['app.services'])
     console.log(username, ' has left the room');
     var index = $scope.activeUsers.indexOf(username);
     $scope.activeUsers.splice(index, 1);
-    index = $scope.currentRoom.users.reduce((a, b, i) => b.username === username ? i : -1, -1);
-    $scope.currentRoom.users.splice(index, 1);
+    //index = $scope.currentRoom.users.reduce((a, b, i) => b.username === username ? i : -1, -1);
+    //$scope.currentRoom.users.splice(index, 1);
 
     $scope.wipeReady(username);
     // $scope.removeActiveUser(username);
