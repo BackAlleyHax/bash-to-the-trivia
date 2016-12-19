@@ -21,6 +21,7 @@ angular.module('app.services', [
       }).then(function successCallback(resp) {
         var user = {
           username: context.user.username,
+          avatar: resp.data.avatar,
           score: 0
         };
         context.rooms[newRoomName] = {
@@ -48,8 +49,10 @@ angular.module('app.services', [
         url: 'api/users/addNewPlayer',
         data: {roomname: roomname, newPlayerUsername: newPlayerUsername}
       }).then(function successCallback(resp) {
+        console.log('avatar', resp.data.avatar);
         var newPlayer = {
           username: newPlayerUsername,
+          avatar: resp.data.avatar,
           score: 0,
         };
         context.rooms[roomname].users.push(newPlayer);
@@ -93,6 +96,7 @@ angular.module('app.services', [
     },
 
     getRoom: function(room) {
+      console.log(room);
       socket.emit('changeRoom', room);
       this.currentRoom = this.rooms[room.roomname];
       return this.currentRoom;
@@ -108,7 +112,6 @@ angular.module('app.services', [
           roomname: context.currentRoom.roomname
         }
       }).then(function successCallback(resp) {
-        context.user.score += score;
         socket.emit('updateScores', context.currentRoom.roomname);
       }, function errorCallback(err) {
         throw err;
@@ -117,11 +120,20 @@ angular.module('app.services', [
 
     correctAnswer: function(user) {
       this.user.score += 100;
-      socket.emit('correctAnswer', user);
+      var score = this.user.score;
+      socket.emit('correctAnswer', user, score);
     },
 
     incorrectAnswer: function(username, roomname) {
       socket.emit('incorrectAnswer', username, roomname);
+    },
+
+    alertPowerUp: function(username, roomname) {
+      socket.emit('alertPowerUp', username, roomname);
+    },
+
+    blankPowerUp: function(username, roomname) {
+      socket.emit('blankPowerUp', username, roomname);
     },
 
     updateAllScores: function() {
@@ -204,7 +216,7 @@ angular.module('app.services', [
           context.user.avatar = resp.data.user.avatar;
           context.user.score = resp.data.user.score;
           context.rooms = resp.data.rooms;
-          socket.emit('signIn', {username: resp.data.user.username});
+          socket.emit('signIn', {username: resp.data.user.username, avatar: resp.data.user.avatar});
           $location.path('/home/profile');
         }
       }).catch(function(err) {

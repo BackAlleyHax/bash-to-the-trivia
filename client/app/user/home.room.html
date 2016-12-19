@@ -6,12 +6,14 @@
 	  <div class="gamePlayer">
 		  <table>
 				<tr>
+					<th></th>
 					<th>Player</th>
 					<th>Score</th>
 					<th>Status</th>
 				</tr>
 				<tr ng-repeat="user in currentRoom.users | orderBy: '-score' track by $index">
-					<td>{{user.username}}</td>
+					<td><img height='50px' width='50px' ng-src="/api/uploads/{{user.avatar}}"></td>
+					<td> {{user.username}}</td>
 					<td>{{user.score}}</td>
 					<td>
 						<div ng-show="!user.ready" class="not-ready">waiting</div>
@@ -19,11 +21,11 @@
 					</td>
 				</tr>
 			</table>
-			
-			
-			
-			
-			
+
+
+
+
+
 			<!--<ul>
 		  	<li ng-repeat="user in currentRoom.users | orderBy: '-score'">
 		  	<span ng-show="!user.ready" class="not-ready">X</span>
@@ -42,6 +44,6 @@
 
 
 	<!--<button class="startGame btn" ui-sref="homeState.game" ng-click="startGame()">Start Game</button>-->
-	<button class="player-ready btn btn-primary" ng-click="playerReady()">Ready!</button>
+	<button ng-show="!user.ready" class="player-ready btn btn-primary" ng-click="playerReady()">Ready!</button>
 	<br>
 </div>

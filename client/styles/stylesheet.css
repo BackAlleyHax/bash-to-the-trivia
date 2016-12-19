@@ -8,7 +8,7 @@
 
 body {
     overflow-x: hidden;
-    background-image: url("landing-bg.jpg");
+    background-image: url("landing-bg2.jpg");
 }
 
 a {
@@ -291,4 +291,17 @@ div.ready {
     color: white;
     border-radius:10px;
     width:auto;
+}
+
+.powerUp {
+  color: black;
+  position: absolute;
+  left: 400px;
+}
+
+.powerUp2 {
+  color: black;
+  position: absolute;
+  top: 30px;
+  left: 400px;
 }

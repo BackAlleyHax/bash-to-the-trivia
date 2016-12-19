@@ -6,10 +6,11 @@ angular.module('app.user', ['app.services'])
   var roundLength = 7;
   var goodJob = new Audio('../../audio/goodJob.wav');
   var denied = new Audio('https://www.freesound.org/data/previews/249/249300_4404552-lq.mp3');
-  
+
 
   //Passing data from the UserInfo factory
   $scope.user = UserInfo.user;
+  $scope.avatar = UserInfo.user.avatar;
   $scope.rooms = UserInfo.rooms;
   $scope.currentRoom = UserInfo.currentRoom;
   $scope.activeUsers = [];
@@ -25,6 +26,7 @@ angular.module('app.user', ['app.services'])
   $scope.goToRoom = function(roomName) {
     $scope.wipeReady($scope.user.username);
     $scope.currentRoom = UserInfo.getRoom(roomName);
+    console.log('timer', timer);
     if (timer) {
       $interval.cancel(timer);
     }
@@ -33,6 +35,7 @@ angular.module('app.user', ['app.services'])
   $scope.addRoom = function(newRoomName) {
     UserInfo.addNewRoom(newRoomName);
     $scope.activeUsers.push($scope.user.username);
+    console.log('timer', timer);
     if (timer) {
       $interval.cancel(timer);
     }
@@ -52,7 +55,6 @@ angular.module('app.user', ['app.services'])
 
   $scope.playerReady = function() {
     UserInfo.playerReady();
-    $scope.weReady();
   };
 
   $scope.startGame = function() {
@@ -65,9 +67,7 @@ angular.module('app.user', ['app.services'])
     var allReady = $scope.currentRoom.users.every(user => user.ready);
 
     console.log("YO! Are we ready??? ", allReady)
-    if(allReady) {
-      $scope.startGame();
-    }
+    if(allReady) {$scope.startGame();}
 
   };
 
@@ -124,7 +124,8 @@ angular.module('app.user', ['app.services'])
     // $scope.removeActiveUser(username);
   });
 
- $scope.on('UserJoined', function(username, activeUsers) {
+ $scope.on('UserJoined', function(username, avatar, activeUsers) {
+   console.log('avatar1', avatar);
     if (username === $scope.user.username) {
       $scope.activeUsers = activeUsers;
       console.log(activeUsers, ' are in the room');
@@ -133,7 +134,8 @@ angular.module('app.user', ['app.services'])
       console.log(username, ' has joined the room');
     }
       if ($scope.currentRoom.users.filter(user => user.username === username).length === 0) {
-        $scope.currentRoom.users.push({username: username, score: 0});
+        console.log('avatar2',avatar);
+        $scope.currentRoom.users.push({username: username, avatar: avatar, score: 0});
       }
   });
 
@@ -160,8 +162,12 @@ angular.module('app.user', ['app.services'])
     console.log(username," is ready!!!");
     console.log('currentRoom', $scope.currentRoom);
     let index = findIndexAtProp($scope.currentRoom.users, 'username', username);
-    $scope.currentRoom.users[index].ready = true;
-    $scope.weReady();
+    if($scope.currentRoom.users[index].ready === true) {
+      $scope.currentRoom.users[index].ready = false;
+    } else {
+      $scope.currentRoom.users[index].ready = true;
+    }
+    setTimeout(function(){$scope.weReady();}, 2000);
 
   });
 
@@ -186,9 +192,11 @@ angular.module('app.user', ['app.services'])
       $scope.gameState.timer -= 1;
     }, 1000);
 
-    $scope.on('correctAnswer', function(user) {
-      $scope.gameState.scoreBoard[user.username] = user;
-      if ($scope.user.username !== user.username) {
+    $scope.on('correctAnswer', function(user, score) {
+      $scope.gameState.scoreBoard[user].score = score;
+      $scope.fireworks = {"background" : "url('../../styles/giphy.gif')"};
+      setTimeout(function(){$scope.fireworks = {"background" : ""};}, 1000);
+      if ($scope.user.username !== user) {
         _someoneElseGotCorrectAnswer(user);
       }
     });
@@ -197,6 +205,19 @@ angular.module('app.user', ['app.services'])
       if ($scope.user.username !== username) {
         _someoneElseScrewedUp(username);
       }
+
+    $scope.on('alertPowerUp', function(username) {
+      if ($scope.user.username !== username) {
+        _youGotAlerted(username);
+      }
+    })
+
+    $scope.on('blankPowerUp', function(username) {
+      if ($scope.user.username !== username) {
+        _youGotBlanked(username);
+      }
+    })
+
     });
 
 //have to be nested, in order to get the questionSet first
@@ -228,23 +249,21 @@ angular.module('app.user', ['app.services'])
       return {
         index: -1,
         isCorrect: 'pending',
+        consecutive1: 0,
+        consecutive2: 0,
         numCorrect: 0,
         gotGanked: false,
         othersWhoScrewedUp: [],
         questionsAttempted: 1,
         gameFinished: false,
-        timer: roundLength, 
+        timer: roundLength,
         scoreBoard: {}
       };
     }
 
     function _someoneElseGotCorrectAnswer(user) {
-      $scope.fireworks = {"background" : "url('../../styles/giphy.gif')"};
       $scope.gameState.gotGanked = user.username;
-      setTimeout(function(){
-        $scope.gameState.gotGanked = false;
-        $scope.fireworks = {"background" : ""};
-      }, 1000);
+      setTimeout(function(){$scope.gameState.gotGanked = false;}, 1000);
       $scope.gameState.isCorrect = 'ganked';
     }
 
@@ -253,6 +272,15 @@ angular.module('app.user', ['app.services'])
         $scope.gameState.othersWhoScrewedUp.push(username);
         console.log($scope.gameState.othersWhoScrewedUp);
       }
+    }
+
+    function _youGotAlerted(username) {
+      alert(`you got attacked by ${username}`);
+    }
+
+    function _youGotBlanked(username) {
+      $scope.gameState.hideQ = true;
+      setTimeout(function(){$scope.gameState.hideQ = false}, 3000);
     }
 
     function _startTimer(roundDuration) {
@@ -286,12 +314,23 @@ angular.module('app.user', ['app.services'])
       goodJob.play();
       $scope.gameState.numCorrect++;
       $scope.gameState.isCorrect = 'yes';
-      UserInfo.correctAnswer($scope.user, $scope.currentRoom.roomname);
-      UserInfo.sendScore()
+      $scope.gameState.consecutive1++;
+      $scope.gameState.consecutive2++;
+      console.log($scope.gameState.consecutive);
+      if($scope.gameState.consecutive1 > 0) {
+        $scope.gameState.alertPowerUp = true;
+      }
+      if($scope.gameState.consecutive2 > 1) {
+        $scope.gameState.blankPowerUp = true;
+      }
+      UserInfo.correctAnswer($scope.user.username, $scope.currentRoom.roomname);
+      UserInfo.sendScore(100);
     } else {
       denied.play();
       $scope.gameState.isCorrect = 'no';
-      UserInfo.incorrectAnswer($scope.user.usernamer, $scope.currentRoom.roomname);
+      $scope.gameState.consecutive1 = 0;
+      $scope.gameState.consecutive2 = 0;
+      UserInfo.incorrectAnswer($scope.user.username, $scope.currentRoom.roomname);
     }
 
     $scope.clear();
@@ -302,6 +341,17 @@ angular.module('app.user', ['app.services'])
     $cookies.put('username', '');
     $location.path('/signin');
   };
+
+  $scope.alertPowerUp = function(){
+    UserInfo.alertPowerUp($scope.user.username, $scope.currentRoom.roomname);
+    $scope.gameState.alertPowerUp = false;
+  };
+
+  $scope.blankPowerUp = function(){
+    $scope.gameState.consecutive2 = 0;
+    UserInfo.blankPowerUp($scope.user.username, $scope.currentRoom.roomname);
+    $scope.gameState.blankPowerUp = false;
+  }
 
 ///////////////////////
 
