@@ -3,7 +3,7 @@ angular.module('app.user', ['app.services'])
 .controller('HomeController', function($scope, $location, UserInfo, $rootScope, $timeout, $interval, $cookies) {
 
   //length of round in seconds
-  var roundLength = 5;
+  var roundLength = 7;
   var goodJob = new Audio('../../audio/goodJob.wav');
   var denied = new Audio('https://www.freesound.org/data/previews/249/249300_4404552-lq.mp3');
 
@@ -221,10 +221,10 @@ angular.module('app.user', ['app.services'])
     })
 
     $scope.on('blackoutPowerUp', function(username) {
-      // if($scope.user.username !== username) {
+      if($scope.user.username !== username) {
         console.log("scope on blackout");
         _youGotBlackedOut(username);
-      // }
+      }
     })
 
     });
@@ -237,7 +237,7 @@ angular.module('app.user', ['app.services'])
       $scope.gameState.timer = roundLength;
       $scope.gameState.questionsAttempted++;
       // sets powerup streaks to zero when you don't answer a question
-      if($scope.gameState.isCorrect === 'pending'){
+      if($scope.gameState.isCorrect === 'pending' || 'ganked'){
         console.log('getting inside the pending');
         $scope.gameState.consecutive1 = 0;
         $scope.gameState.consecutive2 = 0;
@@ -281,6 +281,7 @@ angular.module('app.user', ['app.services'])
     function _someoneElseGotCorrectAnswer(user) {
       $scope.gameState.gotGanked = user.username;
       setTimeout(function(){$scope.gameState.gotGanked = false;}, 1000);
+      $scope.gameState.isCorrect = 'ganked';
     }
 
     function _someoneElseScrewedUp(username) {
@@ -291,7 +292,8 @@ angular.module('app.user', ['app.services'])
     }
 
     function _youGotAlerted(username) {
-      alert(`you got attacked by ${username}`);
+      $scope.gameState.isCorrect = 'disabled';
+      setTimeout(function(){$scope.gameState.isCorrect = 'pending'}, 1000);
     }
 
     function _youGotBlanked(username) {
@@ -346,7 +348,7 @@ angular.module('app.user', ['app.services'])
       if($scope.gameState.consecutive2 > 1) {
         $scope.gameState.blankPowerUp = true;
       }
-      if($scope.gameState.consecutive3 > 0) {
+      if($scope.gameState.consecutive3 > 2) {
         $scope.gameState.blackoutPowerUp = true;
       }
       UserInfo.correctAnswer($scope.user.username, $scope.currentRoom.roomname);

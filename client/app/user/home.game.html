@@ -8,8 +8,8 @@
   </div>
   <div ng-style="fireworks" class="col-md-12" ng-if="!gameState.gameFinished">
     <label><strong>Answers: </strong></label>
-		<button ng-if="gameState.alertPowerUp" ng-click="alertPowerUp()" class='powerUp'>Alert Power Up!!!</button>
-		<button ng-if="gameState.blankPowerUp" ng-click="blankPowerUp()" class='powerUp2'>Hide Power Up!!!</button>
+		<button ng-if="gameState.alertPowerUp" ng-click="alertPowerUp()" class='powerUp'>Disable!!!</button>
+		<button ng-if="gameState.blankPowerUp" ng-click="blankPowerUp()" class='powerUp2'>Hide!!!</button>
 		<button ng-if="gameState.blackoutPowerUp" ng-click="blackoutPowerUp()" class='powerUp3'>Blackout!!!</button>
     <form ng-hide='blackout' ng-repeat="choice in questionSet[gameState.questionsAttempted-1].answerChoices track by $index">
       <input class="answerChoice" type="radio" ng-model="gameState.index" ng-value="$index" ng-change='submitAnswer()' ng-disabled="gameState.isCorrect !== 'pending'">
