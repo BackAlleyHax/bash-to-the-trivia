@@ -237,7 +237,7 @@ angular.module('app.user', ['app.services'])
       $scope.gameState.timer = roundLength;
       $scope.gameState.questionsAttempted++;
       // sets powerup streaks to zero when you don't answer a question
-      if($scope.gameState.isCorrect === 'pending' || 'ganked'){
+      if($scope.gameState.isCorrect === 'pending' || $scope.gameState.isCorrect === 'ganked'){
         console.log('getting inside the pending');
         $scope.gameState.consecutive1 = 0;
         $scope.gameState.consecutive2 = 0;
@@ -341,6 +341,9 @@ angular.module('app.user', ['app.services'])
       $scope.gameState.consecutive1++;
       $scope.gameState.consecutive2++;
       $scope.gameState.consecutive3++;
+      console.log('1', $scope.gameState.consecutive1);
+      console.log('2', $scope.gameState.consecutive2);
+      console.log('3', $scope.gameState.consecutive3);
       console.log($scope.gameState.consecutive);
       if($scope.gameState.consecutive1 > 0) {
         $scope.gameState.alertPowerUp = true;
