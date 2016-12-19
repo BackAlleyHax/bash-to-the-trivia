@@ -3,7 +3,7 @@
   <h1 ng-if="!gameState.gameFinished"><span class="glyphicon glyphicon-hourglass"></span>{{gameState.timer}}</h1>
 
 <!-- GAME HANDLING -->
-  <div ng-if="gameState.gameFinished === false" ng-hide='gameState.hideQ' class="col-md-12">
+  <div ng-if="gameState.gameFinished === false" ng-hide='gameState.hideQ.state' class="col-md-12">
     <h5 class="col-md-6"><strong>Question {{gameState.questionsAttempted}} of 10: {{questionSet[gameState.questionsAttempted - 1].question}}</strong></h5>
   </div>
   <div ng-style="fireworks" class="col-md-12" ng-if="!gameState.gameFinished">
@@ -11,7 +11,7 @@
 		<button ng-if="gameState.alertPowerUp" ng-click="alertPowerUp()" class='powerUp'>Disable!!!</button>
 		<button ng-if="gameState.blankPowerUp" ng-click="blankPowerUp()" class='powerUp2'>Hide!!!</button>
 		<button ng-if="gameState.blackoutPowerUp" ng-click="blackoutPowerUp()" class='powerUp3'>Blackout!!!</button>
-    <form ng-hide='blackout' ng-repeat="choice in questionSet[gameState.questionsAttempted-1].answerChoices track by $index">
+    <form ng-hide='blackout.state' ng-repeat="choice in questionSet[gameState.questionsAttempted-1].answerChoices track by $index">
       <input class="answerChoice" type="radio" ng-model="gameState.index" ng-value="$index" ng-change='submitAnswer()' ng-disabled="gameState.isCorrect !== 'pending'">
         <label for="answerChoice">{{choice}}</label>
       </input>
@@ -47,6 +47,6 @@
       <button ui-sref="^.room({roomname: currentRoom.roomname})" class="btn btn-primary">Back to {{currentRoom.roomname}}</button>
     </div>
     <div ng-if="gameState.othersWhoScrewedUp.length" class="correct">
-      These fools done screwed up: <div ng-repeat="user in gameState.othersWhoScrewedUp">user: {{user}}</div>
+      These users answered incorrectly: <div ng-repeat="user in gameState.othersWhoScrewedUp">user: {{user}}</div>
     </div>
 </div>

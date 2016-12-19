@@ -298,14 +298,14 @@ angular.module('app.user', ['app.services'])
     }
 
     function _youGotBlanked(username) {
-      $scope.gameState.hideQ = true;
-      setTimeout(function(){$scope.gameState.hideQ = false}, 3000);
+      $scope.gameState.hideQ = {state: true, user: username};
+      setTimeout(function(){$scope.gameState.hideQ = {state: false, username: ''}}, 3000);
     }
 
     function _youGotBlackedOut(username) {
       console.log("Black out getting called");
-      $scope.blackout = true;
-      setTimeout(function(){$scope.blackout = false}, 5000);
+      $scope.blackout = {state: true, user: username};
+      setTimeout(function(){$scope.blackout = {state: false, user: ''}}, 5000);
     }
 
     function _startTimer(roundDuration) {

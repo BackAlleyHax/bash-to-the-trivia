@@ -201,10 +201,12 @@ io.on('connection', function(socket) {
 
   socket.on('alertPowerUp', function(username) {
     io.sockets.in(socket.roomname).emit('alertPowerUp', socket.username);
+    console.log("alert emit received on server side");
   })
 
   socket.on('blankPowerUp', function(username) {
     io.sockets.in(socket.roomname).emit('blankPowerUp', socket.username);
+    console.log("blank emit received on server side");
   })
 
   socket.on('blackoutPowerUp', function(username) {

@@ -130,10 +130,12 @@ angular.module('app.services', [
 
     alertPowerUp: function(username, roomname) {
       socket.emit('alertPowerUp', username, roomname);
+      console.log("alert emitted to server");
     },
 
     blankPowerUp: function(username, roomname) {
       socket.emit('blankPowerUp', username, roomname);
+      console.log("blank emitted to server");
     },
 
     blackoutPowerUp: function(username, roomname) {
