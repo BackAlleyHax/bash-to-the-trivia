@@ -305,3 +305,16 @@ div.ready {
   top: 30px;
   left: 400px;
 }
+
+.powerUp3 {
+  color: black;
+  position: absolute;
+  top: 60px;
+  left: 400px;
+}
+
+.blackout {
+    background-color: black;
+    position:relative;
+    z-index: 1000;
+}

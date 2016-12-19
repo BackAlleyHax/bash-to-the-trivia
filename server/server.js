@@ -207,6 +207,11 @@ io.on('connection', function(socket) {
     io.sockets.in(socket.roomname).emit('blankPowerUp', socket.username);
   })
 
+  socket.on('blackoutPowerUp', function(username) {
+    io.sockets.in(socket.roomname).emit('blackoutPowerUp', socket.username);
+    console.log("blackout emit received on server side");
+  })
+
 });
 
 

@@ -136,6 +136,11 @@ angular.module('app.services', [
       socket.emit('blankPowerUp', username, roomname);
     },
 
+    blackoutPowerUp: function(username, roomname) {
+      socket.emit('blackoutPowerUp', username, roomname);
+      console.log("blackout emitted to server");
+    },
+
     updateAllScores: function() {
       var context = this;
       return $http({
