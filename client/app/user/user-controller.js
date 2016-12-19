@@ -35,15 +35,16 @@ angular.module('app.user', ['app.services'])
   $scope.addRoom = function(newRoomName) {
     UserInfo.addNewRoom(newRoomName);
     $scope.activeUsers.push($scope.user.username);
+    $scope.clear();
     console.log('timer', timer);
     if (timer) {
       $interval.cancel(timer);
     }
-    $scope.clear();
   };
 
   $scope.clear = function() {
-    $scope.newRoomName = '';
+    console.log("clear getting called");
+    $scope.newRoomName = null;
     $scope.newPlayer = {};
   }
 
