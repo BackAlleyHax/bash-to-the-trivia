@@ -23,7 +23,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 var uploading = multer({
-  dest: '../uploads',
+  dest: '/uploads',
 });
 
 app.use(bodyParser.urlencoded({extended: true}));
