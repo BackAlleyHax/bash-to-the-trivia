@@ -506,6 +506,7 @@ app.get('/api/questions', function(req, res) {
   var promise = new Promise(function(resolve, reject) {
     request.get(questionApi, function (error, response, body) {
       if (error && !response.statusCode == 200) {
+        console.log("Error at api/questions!!!");
         reject(err);
       } else {
         resolve(body);

@@ -229,6 +229,12 @@ angular.module('app.user', ['app.services'])
     function handleRoundEnd(callback) {
       $scope.gameState.timer = roundLength;
       $scope.gameState.questionsAttempted++;
+      // sets powerup streaks to zero when you don't answer a question
+      if($scope.gameState.isCorrect === 'pending'){
+        console.log('getting inside the pending');
+        $scope.gameState.consecutive1 = 0;
+        $scope.gameState.consecutive2 = 0;
+      }
       $scope.gameState.isCorrect = 'pending';
       $scope.gameState.gotGanked = false;
       $scope.gameState.othersWhoScrewedUp = [];
@@ -266,7 +272,6 @@ angular.module('app.user', ['app.services'])
     function _someoneElseGotCorrectAnswer(user) {
       $scope.gameState.gotGanked = user.username;
       setTimeout(function(){$scope.gameState.gotGanked = false;}, 1000);
-      $scope.gameState.isCorrect = 'ganked';
     }
 
     function _someoneElseScrewedUp(username) {
@@ -351,6 +356,7 @@ angular.module('app.user', ['app.services'])
 
   $scope.blankPowerUp = function(){
     $scope.gameState.consecutive2 = 0;
+    console.log($scope.gameState.consecutive2);
     UserInfo.blankPowerUp($scope.user.username, $scope.currentRoom.roomname);
     $scope.gameState.blankPowerUp = false;
   }

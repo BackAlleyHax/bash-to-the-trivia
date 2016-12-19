@@ -74,7 +74,7 @@ angular.module('app.services', [
         method: 'GET',
         url: 'api/questions'
       }).then(function successCallback(resp) {
-
+        console.log("response from questions/api in startNewGame", resp);
         for (var i = 0; i < resp.data.length; i++) {
           resp.data[i].incorrect_answers.splice(Math.floor(Math.random() * 4), 0, resp.data[i].correct_answer);
           resp.data[i].answerChoices = resp.data[i].incorrect_answers;
