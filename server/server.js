@@ -256,77 +256,158 @@ app.get('/api/users/:username/:roomname', function(req, res) {
 })
 
 
-app.post('/api/users/addRoom', function(req, res) {
-	var roomname = req.body.roomname;
-	var admin = req.body.currentUser;
-	Room.findOne({roomname:roomname}).exec(function(err, room) {
-		if(err || room) {
-			res.status(409).send('Room already exists');
-		} else {
-			var newRoom = Room({
-				roomname: roomname,
-				admin: admin,
-				users: [{username: admin, score: 0}]
-			});
-			newRoom.save(function(err, room) {
-				if(err) {
-					return res.status(400).send(new Error('saveRoom error'))
-				}
-			}).then(function(room) {
-				User.findOne({username: admin}).exec(function(err, adminUser) {
-					if(err || !adminUser) {
-						return res.send(new Error('addRoom error'));
-					} else {
-						adminUser.rooms.push(newRoom.roomname);
-						adminUser.save(function(err, user) {
-							if(err) {
-								res.status(500).send(new Error('Error on save Admin'));
-							}
-              res.status(201).send(user);
-						});
-					}
-				});
-			})
-		}
-	})
+// app.post('/api/users/addRoom', function(req, res) {
+// 	var roomname = req.body.roomname;
+// 	var admin = req.body.currentUser;
+// 	Room.findOne({roomname:roomname}).exec(function(err, room) {
+// 		if(err || room) {
+// 			res.status(409).send('Room already exists');
+// 		} else {
+// 			var newRoom = Room({
+// 				roomname: roomname,
+// 				admin: admin,
+// 				users: [{username: admin, avatar: admin.avatar, score: 0}]
+// 			});
+// 			newRoom.save(function(err, room) {
+// 				if(err) {
+// 					return res.status(400).send(new Error('saveRoom error'))
+// 				}
+// 			}).then(function(room) {
+// 				User.findOne({username: admin}).exec(function(err, adminUser) {
+// 					if(err || !adminUser) {
+// 						return res.send(new Error('addRoom error'));
+// 					} else {
+// 						adminUser.rooms.push(newRoom.roomname);
+// 						adminUser.save(function(err, user) {
+// 							if(err) {
+// 								res.status(500).send(new Error('Error on save Admin'));
+// 							}
+//               res.status(201).send(user);
+// 						});
+// 					}
+// 				});
+// 			})
+// 		}
+// 	})
+// });
+
+app.post('api/users/addRoom', function(req, res) {
+  var roomname = req.body.roomname;
+  var admin = req.body.currentUser;
+  User.findOne({username: admin})
+  .then(function(user){
+    if(!user) {
+      return res.send(new Error('Problem finding user'));
+    }
+    Room.findOne({roomname: roomname})j
+    .then(function(room){
+      if(room){
+        return res.send(new Error('Room already exists'));
+      }
+      var newRoom = Room({
+        roomname: roomname,
+        admin: admin,
+        users: [{username: admin, avatar, user.avatar, score: 0}]
+      });
+      newRoom.save(function(err, room) {
+        if(err) {
+          return res.status(400).send(new Error('saveRoom error'))
+        }
+      })
+      .then(function(room){
+        if(!room) {
+          return res.send(new Error('addRoom error'));
+        }
+        user.rooms.push(room.roomname);
+        user.save(function(err, user) {
+          if(err) {
+            res.status(500).send(new Error('Error on save Admin'));
+          }
+          res.status(201).send(user);
+        });
+      });
+    });
+  });
 });
 
-app.post('/api/users/addNewPlayer', function(req, res) {
-	var roomname = req.body.roomname;
-	var newPlayerUsername = req.body.newPlayerUsername;
-	Room.findOne({roomname: roomname, 'users.username': newPlayerUsername}).exec(function(err, room) {
-		if(room) {
-			return res.status(400).send('User already in room');
-		} else {
-			Room.findOne({roomname: roomname}).exec(function(err, room) {
-				if (err || room === null) {
-					return res.status(400).send('Room doesn\'t exist');
-				}
-        var newPlayer = {
-          username: newPlayerUsername,
-          score: 0
-        };
-				room.users.push(newPlayer);
-				room.save(function(err){
-					if(err) {
-						return res.status(400).send('Cannot save room updates');
-					}
-					User.findOne({username: newPlayerUsername}).exec(function(err, user) {
-						if (user === null || err) {
-							return res.status(400).send('User doesn\'t exist');
-						}
-						user.rooms.push(roomname);
-						user.save(function(err){
-							if(err) {
-								return res.status(400).send('Cannot save user updates');
-							}
-							res.status(201).send(user);
-						});
-					});
-				});
-			});
-		}
-	});
+// app.post('/api/users/addNewPlayer', function(req, res) {
+// 	var roomname = req.body.roomname;
+// 	var newPlayerUsername = req.body.newPlayerUsername;
+// 	Room.findOne({roomname: roomname, 'users.username': newPlayerUsername}).exec(function(err, room) {
+// 		if(room) {
+// 			return res.status(400).send('User already in room');
+// 		} else {
+// 			Room.findOne({roomname: roomname}).exec(function(err, room) {
+// 				if (err || room === null) {
+// 					return res.status(400).send('Room doesn\'t exist');
+// 				}
+//         var newPlayer = {
+//           username: newPlayerUsername,
+//           avatar: newPlayerUsername.avatar,
+//           score: 0
+//         };
+// 				room.users.push(newPlayer);
+// 				room.save(function(err){
+// 					if(err) {
+// 						return res.status(400).send('Cannot save room updates');
+// 					}
+// 					User.findOne({username: newPlayerUsername}).exec(function(err, user) {
+// 						if (user === null || err) {
+// 							return res.status(400).send('User doesn\'t exist');
+// 						}
+// 						user.rooms.push(roomname);
+// 						user.save(function(err){
+// 							if(err) {
+// 								return res.status(400).send('Cannot save user updates');
+// 							}
+// 							res.status(201).send(user);
+// 						});
+// 					});
+// 				});
+// 			});
+// 		}
+// 	});
+// });
+
+app.post('/api/users/addNewPlayer', function(req, res){
+  var roomname = req.body.roomname;
+  var newPlayerUsername = req.body.newPlayerUsername;
+  User.findOne({username: newPlayerUsername})
+  .then(function(user) {
+    if (!user) {
+      return res.status(400).send('User does not exist');
+    }
+    Room.findOne({roomname: roomname, 'users.username': newPlayerUsername})
+    .then(function(roomWithUser){
+      if (roomWithUser) { return res.status(400).send('User is already in room');}
+      else {
+        Room.findOne({roomname: roomname})
+        .then(function(room){
+          if (!room) {
+            return res.status(400).send('Room does not exist');
+          }
+          var newPlayer = {
+            username: newPlayerUsername,
+            avatar: user.avatar,
+            score: 0,
+          };
+          room.users.push(newPlayer);
+          room.save(function(err){
+            if(err) {
+              return res.status(400).send('Cannot save room updates');
+            }
+            user.rooms.push(roomname);
+            user.save(function(err) {
+              if(err) {
+                return res.status(400).send('Cannot save user updates');
+              }
+              res.status(201).send(user);
+            });
+          });
+        });
+      }
+    });
+  });
 });
 
 app.post('/api/updateScores', function(req, res) {
@@ -419,6 +500,7 @@ app.post('/api/signup', function(req, res) {
 					if(err) return res.sendStatus(500);
           var newUser = {
             username: user.username,
+            avatar: user.avatar,
             score: 0
           };
           var avatar = user.avatar;

@@ -96,6 +96,7 @@ angular.module('app.services', [
     },
 
     getRoom: function(room) {
+      console.log(room);
       socket.emit('changeRoom', room);
       this.currentRoom = this.rooms[room.roomname];
       return this.currentRoom;
