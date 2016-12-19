@@ -3,7 +3,7 @@
 angular.module('app.services', [
   'ngCookies'
 ])
-.factory('UserInfo', function($http, $rootScope, $location, $timeout, $cookies) {
+.factory('UserInfo', function($http, $rootScope, $location, $timeout, $cookies, Upload) {
   var socket = io.connect();
 
   return {
@@ -148,6 +148,23 @@ angular.module('app.services', [
       }, function errorCallback(err) {
         throw err;
       });
+    },
+
+    uploadAvatar: function(file, $scope) {
+      var context = this;
+      if (file) {
+        console.log(file);
+        Upload.upload({
+          url: 'api/profile/upload/',
+          method: 'POST',
+          data: {avatar: file, username: $scope.user.username},
+        })
+        .then(function (response) {
+          console.log(response);
+          $scope.avatar = response.data;
+          context.user.avatar = response.data;
+        });
+      }
     },
 
 //RE-IMPLEMENTING SOCKETS.IO METHODS TO USE THEM IN THE CONTROLLERS DUE TO SCOPE ISSUES//
